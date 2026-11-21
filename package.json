@@ -1,0 +1,16 @@
+{
+  "name": "nukebot",
+  "version": "1.0.0",
+  "description": "Discord nuke bot script using discord.js and dotenv",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
