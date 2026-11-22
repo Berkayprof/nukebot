@@ -57,7 +57,6 @@ Or just use `Administrator` (permission `8`) — that covers everything, includi
 ```bash
 git clone https://github.com/berkayprof/nukebot.git
 cd nukebot
-npm init -y
 npm install
 cp .env.example .env
 ```
@@ -65,7 +64,7 @@ cp .env.example .env
 Fill in `.env` (see below) and start:
 
 ```bash
-node index.js
+npm start
 ```
 
 The bot logs in, registers the slash commands globally, and DMs the owner that it's online. If a `nuke-state.json` is found, that DM warns that an interrupted run is waiting.
