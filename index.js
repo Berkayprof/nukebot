@@ -720,7 +720,7 @@ async function onStartup() {
     if (startupHandled) return;
     startupHandled = true;
 
-    log("INFO", `Logged in as ${client.user.tag} — AUTO_LEAVE=${AUTO_LEAVE}`);
+    log("INFO", `Logged in as ${client.user.tag}`);
 
     try {
         await client.application.commands.set(COMMANDS);
