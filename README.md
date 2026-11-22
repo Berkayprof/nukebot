@@ -1,9 +1,8 @@
-# Nuke Bot
+# ☢️ Berkayprof's Discord Nuke Bot
 
 A Discord bot that wipes one or more servers and rebuilds them from scratch: channels, roles, emojis, stickers, soundboard sounds, automod rules, invites, scheduled events and integrations are deleted, after which a clean category with empty channels and spam messages is put back.
 
-> **Irreversible.** There is no undo. Deleted channels and roles are gone for good. Test on a throwaway server first.
-
+> **Disclaimer:** This bot modifies Discord servers into a unrestorable state. All channels, roles and more will be deleted. You may exclusivly use this bot on servers that you own or have explicit permission to use it on.
 ---
 
 ## What the bot does
